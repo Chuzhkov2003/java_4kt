@@ -1,0 +1,33 @@
+import java.util.Scanner;
+
+
+public class MyClass {
+  public static void main(String args[]) {
+   Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите число от 1 до 9999: ");
+        int arabicNumber = scanner.nextInt();
+        
+        if (arabicNumber <= 1 || arabicNumber >= 10000) {
+            System.out.println("Число должно быть в диапазоне 1 < n < 10000");
+        } else {
+            String romanNumber = convertToRoman(arabicNumber);
+            System.out.println("Римское число: " + romanNumber);
+        }
+    }
+    
+    public static String convertToRoman(int num) {
+        if (num < 1 || num >= 10000) {
+            return "Недопустимое число";
+        }
+        
+        String[] thousands = {"", "M", "MM", "MMM", "MMMM", "MMMMM", "MMMMMM", "MMMMMMM", "MMMMMMMM", "MMMMMMMMM"};
+        String[] hundreds = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        String[] tens = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        String[] units = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        
+        return thousands[num / 1000] + 
+               hundreds[(num % 1000) / 100] + 
+               tens[(num % 100) / 10] + 
+               units[num % 10];
+  }
+}
