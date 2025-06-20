@@ -1,0 +1,96 @@
+import java.util.*;
+import java.io.*;
+import java.nio.file.*;
+
+
+public class MyClass {
+    public static void main(String args[]) {
+
+        Scanner scanner = new Scanner(System.in);
+        
+        while (true) {
+            System.out.println("\nВыберите действие:");
+            System.out.println("1. Вычислить выражение");
+            System.out.println("2. Показать историю вычислений");
+            System.out.println("3. Выход");
+            System.out.print("> ");
+            
+            String choice = scanner.nextLine();
+            
+            switch (choice) {
+                case "1":
+                    calculateExpression(scanner);
+                    break;
+                case "2":
+                    showHistory();
+                    break;
+                case "3":
+                    System.out.println("До свидания!");
+                    return;
+                default:
+                    System.out.println("Неверный выбор, попробуйте снова.");
+            }
+        }
+    }
+    
+    private static void calculateExpression(Scanner scanner) {
+        System.out.print("Введите выражение (например, 7 + 3 * |(-2^3 - 4)| % 23 / 2 //): ");
+        String expression = scanner.nextLine();
+        
+        try {
+            double result = evaluateExpression(expression);
+            System.out.println("Результат: " + result);
+            
+         
+            String historyEntry = expression + " = " + result;
+            saveToHistory(historyEntry);
+        } catch (Exception e) {
+            System.out.println("Ошибка вычисления: " + e.getMessage());
+        }
+    }
+    
+    private static double evaluateExpression(String expression) throws Exception {
+    
+        expression = expression.replaceAll("\\|([^|]+)\\|", "abs($1)");
+        
+        
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("js");
+        
+        
+        engine.eval("function abs(x) { return Math.abs(x); }");
+        
+        
+        Object result = engine.eval(expression);
+        
+        if (result instanceof Number) {
+            return ((Number) result).doubleValue();
+        }
+        throw new Exception("Невозможно вычислить выражение");
+    }
+    
+    private static void saveToHistory(String entry) {
+        try {
+            Files.write(Paths.get(HISTORY_FILE), 
+                      (entry + System.lineSeparator()).getBytes(),
+                      StandardOpenOption.CREATE, 
+                      StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            System.out.println("Не удалось сохранить в историю: " + e.getMessage());
+        }
+    }
+    
+    private static void showHistory() {
+        try {
+            if (!Files.exists(Paths.get(HISTORY_FILE))) {
+                System.out.println("История вычислений пуста.");
+                return;
+            }
+            
+            System.out.println("\nИстория вычислений:");
+            Files.lines(Paths.get(HISTORY_FILE)).forEach(System.out::println);
+        } catch (IOException e) {
+            System.out.println("Не удалось прочитать историю: " + e.getMessage());
+        }
+    }
+}
