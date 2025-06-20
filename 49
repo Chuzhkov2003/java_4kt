@@ -1,0 +1,33 @@
+import java.util.*;
+
+public class MyClass {
+    public static void main(String args[]) {
+   for (int i = 0; i <= 20; i++) {
+            System.out.println("fusc(" + i + ") = " + fusc(i));
+        }
+    }
+    
+    public static int fusc(int n) {
+        if (n == 0) return 0;    
+        if (n == 1) return 1;    
+        
+        int a = 1;  
+        int b = 0;  
+        
+        while (n > 1) {
+            if (n % 2 == 0) {
+                
+                n = n / 2;
+              
+            } else {
+               
+                n = n / 2;
+                int temp = a;
+                a = a + b;
+                b = temp;
+            }
+        }
+        
+        return a;
+    }
+}
