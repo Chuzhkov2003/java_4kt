@@ -1,0 +1,81 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class MyClass {
+  public static void main(String args[]) {
+     Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите римское число (I < n < MMMMMMMMMCMXCIX): ");
+        String romanNumber = scanner.nextLine().trim().toUpperCase();
+        
+        if (!isValidRoman(romanNumber)) {
+            System.out.println("Некорректное римское число или выходит за диапазон");
+        } else {
+            int arabicNumber = convertToArabic(romanNumber);
+            if (arabicNumber <= 1 || arabicNumber >= 10000) {
+                System.out.println("Число должно быть в диапазоне 1 < n < 10000");
+            } else {
+                System.out.println("Арабское число: " + arabicNumber);
+            }
+        }
+    }
+    
+    public static int convertToArabic(String roman) {
+        Map<Character, Integer> romanMap = new HashMap<>();
+        romanMap.put('I', 1);
+        romanMap.put('V', 5);
+        romanMap.put('X', 10);
+        romanMap.put('L', 50);
+        romanMap.put('C', 100);
+        romanMap.put('D', 500);
+        romanMap.put('M', 1000);
+        
+        int result = 0;
+        int prevValue = 0;
+        
+        for (int i = roman.length() - 1; i >= 0; i--) {
+            char currentChar = roman.charAt(i);
+            int currentValue = romanMap.get(currentChar);
+            
+            if (currentValue < prevValue) {
+                result -= currentValue;
+            } else {
+                result += currentValue;
+            }
+            
+            prevValue = currentValue;
+        }
+        
+        return result;
+    }
+    
+    public static boolean isValidRoman(String roman) {
+       
+        if (!roman.matches("^[IVXLCDM]+$")) {
+            return false;
+        }
+        
+      
+        if (roman.matches(".*I{4,}.*") || roman.matches(".*X{4,}.*") || 
+            roman.matches(".*C{4,}.*") || roman.matches(".*M{4,}.*")) {
+            return false;
+        }
+        
+      
+        if (roman.matches(".*V{2,}.*") || roman.matches(".*L{2,}.*") || 
+            roman.matches(".*D{2,}.*")) {
+            return false;
+        }
+        
+      
+        String[] invalidPairs = {"IL", "IC", "ID", "IM", "VX", "VL", "VC", "VD", "VM",
+                               "LC", "LD", "LM", "DM"};
+        for (String pair : invalidPairs) {
+            if (roman.contains(pair)) {
+                return false;
+            }
+        }
+        
+        return true;
+  }
+}
